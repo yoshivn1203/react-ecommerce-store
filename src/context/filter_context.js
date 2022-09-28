@@ -42,7 +42,7 @@ export const FilterProvider = ({ children }) => {
   useEffect(() => {
     dispatch({ type: FILTER_PRODUCTS });
     dispatch({ type: SORT_PRODUCTS });
-  }, [products, state.sort, state.filter]);
+  }, [products, state.sort, state.filters]);
 
   const setGridView = () => {
     dispatch({ type: SET_GRIDVIEW });
@@ -58,9 +58,23 @@ export const FilterProvider = ({ children }) => {
   const updateFilter = (e) => {
     let name = e.target.name;
     let value = e.target.value;
+    if (name === 'category') {
+      value = e.target.textContent;
+    }
+    if (name === 'color') {
+      value = e.target.dataset.color;
+    }
+    if (name === 'price') {
+      value = Number(value);
+    }
+    if (name === 'shipping') {
+      value = e.target.checked;
+    }
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
   };
-  const clearFilter = () => {};
+  const clearFilter = () => {
+    dispatch({ type: CLEAR_FILTERS });
+  };
 
   return (
     <FilterContext.Provider

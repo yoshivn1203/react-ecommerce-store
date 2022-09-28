@@ -71,7 +71,50 @@ const filter_reducer = (state, action) => {
     };
   }
   if (action.type === FILTER_PRODUCTS) {
-    return { ...state };
+    const {
+      all_products,
+      filters: { text, company, category, color, price, shipping },
+    } = state;
+    let tempProducts = [...all_products];
+    if (tempProducts.length > 0) {
+      if (text !== '') {
+        tempProducts = tempProducts.filter((product) =>
+          product.name.toLowerCase().includes(text.toLowerCase())
+        );
+      }
+      if (category !== 'all') {
+        tempProducts = tempProducts.filter((product) => product.category === category);
+      }
+      if (company !== 'all') {
+        tempProducts = tempProducts.filter((product) => product.company === company);
+      }
+      if (color !== 'all') {
+        tempProducts = tempProducts.filter((product) => product.colors.includes(color));
+        //   tempProducts = tempProducts.filter((product) =>
+        //   product.colors.find((c) => c === color)
+        // );
+      }
+      if (shipping === true) {
+        tempProducts = tempProducts.filter((product) => product.shipping === shipping);
+      }
+      tempProducts = tempProducts.filter((product) => product.price <= price);
+    }
+    return { ...state, filtered_products: tempProducts };
+  }
+
+  if (action.type === CLEAR_FILTERS) {
+    return {
+      ...state,
+      filters: {
+        ...state.filters,
+        text: '',
+        company: 'all',
+        category: 'all',
+        color: 'all',
+        price: state.filters.max_price,
+        shipping: false,
+      },
+    };
   }
   throw new Error(`No Matching "${action.type}" - action type`);
 };
